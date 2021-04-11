@@ -22,6 +22,7 @@ RUN cp /build/main .
 # Build a small image
 FROM scratch
 
+COPY ./database/data.json /database/data.json
 COPY --from=builder /dist/main /
 
 ENTRYPOINT ["/main"]
