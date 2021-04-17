@@ -9,7 +9,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/rwoj/sample-micro-app/api-server/database"
-
+	"github.com/rwoj/sample-micro-app/api-server/smicroapppb"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -25,7 +25,7 @@ func main() {
 		}
 		defer cc.Close()
 
-		c := smikroapppb.NewCalculatorServiceClient(cc)
+		c := smicroapppb.NewCalculatorServiceClient(cc)
 		// fmt.Printf("Created client: %f", c)
 
 		doUnary(c)
@@ -53,9 +53,9 @@ func main() {
 	r.Run(":3000")
 }
 
-func doUnary(c smikroapppb.CalculatorServiceClient) {
+func doUnary(c smicroapppb.CalculatorServiceClient) {
 	fmt.Println("Starting to do a Sum Unary RPC...")
-	req := &smikroapppb.SumRequest{
+	req := &smicroapppb.SumRequest{
 		FirstNumber:  5,
 		SecondNumber: 40,
 	}
@@ -66,9 +66,9 @@ func doUnary(c smikroapppb.CalculatorServiceClient) {
 	log.Printf("Response from Sum: %v", res.SumResult)
 }
 
-func doServerStreaming(c smikroapppb.CalculatorServiceClient) {
+func doServerStreaming(c smicroapppb.CalculatorServiceClient) {
 	fmt.Println("Starting to do a PrimeDecomposition Server Streaming RPC...")
-	req := &smikroapppb.PrimeNumberDecompositionRequest{
+	req := &smicroapppb.PrimeNumberDecompositionRequest{
 		Number: 12390392840,
 	}
 	stream, err := c.PrimeNumberDecomposition(context.Background(), req)
@@ -87,7 +87,7 @@ func doServerStreaming(c smikroapppb.CalculatorServiceClient) {
 	}
 }
 
-func doClientStreaming(c smikroapppb.CalculatorServiceClient) {
+func doClientStreaming(c smicroapppb.CalculatorServiceClient) {
 	fmt.Println("Starting to do a ComputeAverage Client Streaming RPC...")
 
 	stream, err := c.ComputeAverage(context.Background())
@@ -99,7 +99,7 @@ func doClientStreaming(c smikroapppb.CalculatorServiceClient) {
 
 	for _, number := range numbers {
 		fmt.Printf("Sending number: %v\n", number)
-		stream.Send(&smikroapppb.ComputeAverageRequest{
+		stream.Send(&smicroapppb.ComputeAverageRequest{
 			Number: number,
 		})
 	}
@@ -112,7 +112,7 @@ func doClientStreaming(c smikroapppb.CalculatorServiceClient) {
 	fmt.Printf("The Average is: %v\n", res.GetAverage())
 }
 
-func doBiDiStreaming(c smikroapppb.CalculatorServiceClient) {
+func doBiDiStreaming(c smicroapppb.CalculatorServiceClient) {
 	fmt.Println("Starting to do a FindMaximum BiDi Streaming RPC...")
 
 	stream, err := c.FindMaximum(context.Background())
@@ -128,7 +128,7 @@ func doBiDiStreaming(c smikroapppb.CalculatorServiceClient) {
 		numbers := []int32{4, 7, 2, 19, 4, 6, 32}
 		for _, number := range numbers {
 			fmt.Printf("Sending number: %v\n", number)
-			stream.Send(&smikroapppb.FindMaximumRequest{
+			stream.Send(&smicroapppb.FindMaximumRequest{
 				Number: number,
 			})
 			time.Sleep(1000 * time.Millisecond)
@@ -154,7 +154,7 @@ func doBiDiStreaming(c smikroapppb.CalculatorServiceClient) {
 	<-waitc
 }
 
-func doErrorUnary(c smikroapppb.CalculatorServiceClient) {
+func doErrorUnary(c smicroapppb.CalculatorServiceClient) {
 	fmt.Println("Starting to do a SquareRoot Unary RPC...")
 
 	// correct call
@@ -164,8 +164,8 @@ func doErrorUnary(c smikroapppb.CalculatorServiceClient) {
 	doErrorCall(c, -2)
 }
 
-func doErrorCall(c smikroapppb.CalculatorServiceClient, n int32) {
-	res, err := c.SquareRoot(context.Background(), &smikroapppb.SquareRootRequest{Number: n})
+func doErrorCall(c smicroapppb.CalculatorServiceClient, n int32) {
+	res, err := c.SquareRoot(context.Background(), &smicroapppb.SquareRootRequest{Number: n})
 
 	if err != nil {
 		respErr, ok := status.FromError(err)

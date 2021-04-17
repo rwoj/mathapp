@@ -10,8 +10,11 @@ to test:
 docker build -t rwoj/api-server .
 docker run -p 3000:3000 -it rwoj/api-server
 
+docker build -t rwoj/grpc-server .
+
 docker login -u "rwoj" docker.io
 docker push rwoj/api-server
+docker push rwoj/grpc-server
 
 3) K8s
 
