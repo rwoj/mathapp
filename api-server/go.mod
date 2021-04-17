@@ -1,4 +1,4 @@
-module github.com/rwoj/sample-micro-app
+module github.com/rwoj/sample-micro-app/api-server
 
 go 1.13
 

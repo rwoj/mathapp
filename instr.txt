@@ -43,7 +43,7 @@ skaffold dev /to run
 //protoc smikroapppb/smikroapppb.proto --go_out=plugins=grpc:.
 
 generate proto per each microservice - to be improved
-protoc smikroapppb/smikroapppb.proto --go_out=plugins=grpc:./api-server
-protoc smikroapppb/smikroapppb.proto --go_out=plugins=grpc:./grpc-server
+protoc smicroapppb/smicroapppb.proto --go_out=plugins=grpc:./api-server
+protoc smicroapppb/smikroapppb.proto --go_out=plugins=grpc:./grpc-server
 
 4.2) use in microservice

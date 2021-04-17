@@ -8,8 +8,8 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/rwoj/sample-micro-app/database"
-	"github.com/rwoj/sample-micro-app/smikroapppb"
+	"github.com/rwoj/sample-micro-app/api-server/database"
+
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
