@@ -1,0 +1,15 @@
+apiVersion: skaffold/v2beta11
+kind: Config
+metadata:
+  name: sample-micro-app
+build:
+  artifacts:
+  - image: rwoj/api-server
+    context: api-server
+    docker:
+      dockerfile: Dockerfile
+deploy:
+  kubectl:
+    manifests:
+    - K8s/api-server-depl.yaml
+    - K8s/ingress-srv.yaml

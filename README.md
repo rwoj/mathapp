@@ -1,5 +1,4 @@
-# mathapp
-golang docker example; initially it was about math, now it is about cats and dogs ;) just testing
+# sample-micro-app
+app created to test microservices api/grpc communication deployed in K8s with Skaffold CI/CD
 
-docker build -t mathapp-dev .
-docker run -p 3000:3000 -it mathapp-dev
+via api-server grpc client is triggered to run service on grpc-server

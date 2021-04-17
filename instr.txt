@@ -1,0 +1,49 @@
+1) Go app
+
+go mod init rwoj/
+
+2) Create containter from working code
+
+Dockerfile
+
+to test:
+docker build -t rwoj/api-server .
+docker run -p 3000:3000 -it rwoj/api-server
+
+docker login -u "rwoj" docker.io
+docker push rwoj/api-server
+
+3) K8s
+
+3.1) deployment, service .yamls
+
+../K8s
+
+3.2) ingress service
+//first install nginx-ingress
+//kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/static/provider/cloud/deploy.yaml
+
+ingress-srv.yaml /setup api endpoint
+
+3.3) CI/CD enable skaffold
+// first install from skaffold.dev (via choco)
+
+skaffold init // 
+
+skaffold.yaml /config in main directory
+
+skaffold dev /to run
+
+4) grpc setup
+
+4.1) setup protocol buffers
+./smikroapppb
+*.proto
+
+//protoc smikroapppb/smikroapppb.proto --go_out=plugins=grpc:.
+
+generate proto per each microservice - to be improved
+protoc smikroapppb/smikroapppb.proto --go_out=plugins=grpc:./api-server
+protoc smikroapppb/smikroapppb.proto --go_out=plugins=grpc:./grpc-server
+
+4.2) use in microservice
