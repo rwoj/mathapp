@@ -1,7 +1,7 @@
 syntax = "proto3";
 
 package smicroapppb;
-// option go_package = "smicroapp/smicroapppb";
+option go_package = "smicroapppb/smicroapppb";
 
 message SumRequest {
     int32 first_number = 1;

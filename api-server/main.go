@@ -10,7 +10,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/rwoj/sample-micro-app/api-server/database"
-	"github.com/rwoj/sample-micro-app/api-server/smicroapppb"
+	"github.com/rwoj/sample-micro-app/api-server/smicroapppb/smicroapppb"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
