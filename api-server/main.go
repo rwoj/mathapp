@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -17,27 +18,17 @@ import (
 
 func main() {
 	r := gin.Default()
+	cc, err := grpc.Dial("grpc-server-srv:50051", grpc.WithInsecure())
+	// cc, err := grpc.Dial("grpc-server-srv", grpc.WithInsecure())
+	pc := smicroapppb.NewCalculatorServiceClient(cc)
+	if err != nil {
+		log.Fatalf("could not connect: %v", err)
+	}
+	defer cc.Close()
+	fmt.Println("Created grpc client")
+	// fmt.Printf("Created grpc client: %f", pc)
+
 	r.GET("/ping", func(c *gin.Context) {
-		fmt.Println("Calculator Client")
-		cc, err := grpc.Dial("localhost:50051", grpc.WithInsecure())
-		if err != nil {
-			log.Fatalf("could not connect: %v", err)
-		}
-		defer cc.Close()
-
-		c := smicroapppb.NewCalculatorServiceClient(cc)
-		// fmt.Printf("Created client: %f", c)
-
-		doUnary(c)
-
-		// doServerStreaming(c)
-
-		// doClientStreaming(c)
-
-		// doBiDiStreaming(c)
-
-		// doErrorUnary(c)
-
 		c.JSON(200, gin.H{
 			"message": "heja tu pong",
 		})
@@ -50,41 +41,97 @@ func main() {
 		}
 		c.JSON(200, animal)
 	})
+	r.GET("/calculator/sum/:val", func(c *gin.Context) {
+		calc := c.Param("val")
+		i, er := strconv.ParseInt(calc, 10, 32)
+		j := 35
+		if er != nil {
+			log.Fatalf("not a number parameter: %v", er)
+		}
+
+		res, err := doSumUnary(pc, int32(i), int32(j))
+		if err != nil {
+			log.Fatalf("error while calling Sum RPC: %v", err)
+		}
+
+		log.Printf("Response from Sum: %v", res)
+
+		t := "sum of " + calc + " and " + strconv.FormatInt(int64(j), 10)
+
+		c.JSON(200, gin.H{
+			t: res,
+		})
+	})
+	r.GET("/calculator/prime/:val", func(c *gin.Context) {
+		calc := c.Param("val")
+		i, er := strconv.ParseInt(calc, 10, 64)
+		if er != nil {
+			log.Fatalf("not a number parameter: %v", er)
+		}
+
+		rr, err := doPrimaryServerStreaming(pc, i)
+		if err != nil {
+			log.Fatal("errror")
+		}
+
+		t := "prime"
+		res := fmt.Sprintf("%v", rr)
+
+		c.JSON(200, gin.H{
+			t: res,
+		})
+	})
+
 	r.Run(":3000")
 }
 
-func doUnary(c smicroapppb.CalculatorServiceClient) {
+// doServerStreaming(pc)
+
+// doClientStreaming(pc)
+
+// doBiDiStreaming(pc)
+
+// doErrorUnary(pc)
+
+func doSumUnary(c smicroapppb.CalculatorServiceClient, fn int32, sn int32) (rr int32, err error) {
 	fmt.Println("Starting to do a Sum Unary RPC...")
 	req := &smicroapppb.SumRequest{
-		FirstNumber:  5,
-		SecondNumber: 40,
+		FirstNumber:  fn,
+		SecondNumber: sn,
 	}
 	res, err := c.Sum(context.Background(), req)
 	if err != nil {
-		log.Fatalf("error while calling Sum RPC: %v", err)
+		return 0, err
 	}
-	log.Printf("Response from Sum: %v", res.SumResult)
+	return res.SumResult, nil
 }
 
-func doServerStreaming(c smicroapppb.CalculatorServiceClient) {
+func doPrimaryServerStreaming(c smicroapppb.CalculatorServiceClient, pn int64) (rr []int64, er error) {
+	// strm smicroapppb.CalculatorService_PrimeNumberDecompositionServer
 	fmt.Println("Starting to do a PrimeDecomposition Server Streaming RPC...")
 	req := &smicroapppb.PrimeNumberDecompositionRequest{
-		Number: 12390392840,
+		Number: pn,
 	}
-	stream, err := c.PrimeNumberDecomposition(context.Background(), req)
+	strm, err := c.PrimeNumberDecomposition(context.Background(), req)
 	if err != nil {
 		log.Fatalf("error while calling PrimeDecomposition RPC: %v", err)
 	}
+	// if err0 != nil {
+	// 	return err0
+	// }
+
 	for {
-		res, err := stream.Recv()
+		res, err := strm.Recv()
 		if err == io.EOF {
 			break
 		}
 		if err != nil {
 			log.Fatalf("Something happened: %v", err)
 		}
+		rr = append(rr, res.GetPrimeFactor())
 		fmt.Println(res.GetPrimeFactor())
 	}
+	return rr, nil
 }
 
 func doClientStreaming(c smicroapppb.CalculatorServiceClient) {

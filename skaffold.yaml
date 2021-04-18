@@ -8,8 +8,13 @@ build:
     context: api-server
     docker:
       dockerfile: Dockerfile
+  - image: rwoj/grpc-server
+    context: grpc-server
+    docker:
+      dockerfile: Dockerfile
 deploy:
   kubectl:
     manifests:
     - K8s/api-server-depl.yaml
+    - K8s/grpc-server-depl.yaml
     - K8s/ingress-srv.yaml

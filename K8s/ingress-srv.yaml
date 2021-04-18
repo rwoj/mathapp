@@ -25,6 +25,13 @@ spec:
                 name: api-server-srv
                 port: 
                   number: 3000                  
+          - path: /calculator
+            pathType: Prefix
+            backend:
+              service: 
+                name: api-server-srv
+                port: 
+                  number: 3000                  
           # - path: /
           #   pathType: Prefix
           #   backend:

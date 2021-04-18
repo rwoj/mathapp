@@ -11,7 +11,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	"github.com/rwoj/sample-micro-app/api-server/smicroapppb"
+	"github.com/rwoj/sample-micro-app/grpc-server/smicroapppb"
 	"google.golang.org/grpc/reflection"
 
 	"google.golang.org/grpc"
@@ -117,6 +117,7 @@ func (*server) SquareRoot(ctx context.Context, req *smicroapppb.SquareRootReques
 func main() {
 	fmt.Println("Calculator Server")
 
+	// lis, err := net.Listen("tcp", "grpc-server-srv")
 	lis, err := net.Listen("tcp", "0.0.0.0:50051")
 	if err != nil {
 		log.Fatalf("Failed to listen: %v", err)

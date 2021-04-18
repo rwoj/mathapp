@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: grpc-server-depl
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            app: grpc-server
+    template:
+        metadata:
+            labels:
+                app: grpc-server
+        spec:
+            containers:
+                - name: grpc-server
+                  image: rwoj/grpc-server
+---
+apiVersion: v1
+kind: Service
+metadata:
+    name: grpc-server-srv
+spec:
+    selector:
+        app: grpc-server
+    ports:
+        - name: grpc-server
+          protocol: TCP
+          port: 50051
+          targetPort: 50051
